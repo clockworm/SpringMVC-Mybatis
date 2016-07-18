@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="User">
+	<resultMap type="com.mick.entity.User" id="UserResult">
+		<id column="user_id" jdbcType="VARCHAR" property="id" />
+		<result column="user_code" jdbcType="INTEGER" property="code" />
+		<result column="user_username" jdbcType="VARCHAR" property="username" />
+		<result column="user_password" jdbcType="VARCHAR" property="password" />
+		<result column="user_phone" jdbcType="VARCHAR" property="phone" />
+		<result column="user_email" jdbcType="VARCHAR" property="email" />
+		<result column="autologinAuthKey" jdbcType="VARCHAR" property="autologinAuthKey" />
+		<result column="create_date" jdbcType="DATE" property="createTime" />
+		<result column="user_status" jdbcType="INTEGER" property="status" />
+		<result column="user_validateCode" jdbcType="VARCHAR" property="validateCode" />
+	</resultMap>
+	<select id="find" parameterType="String" resultMap="UserResult">
+		SELECT
+		user_id,user_code,user_username,user_password,user_phone,user_email,create_date,autologinAuthKey,user_validateCode,user_status
+		FROM sys_user WHERE user_id
+		=#{id:VARCHAR}
+	</select>
+	<select id="login" parameterType="com.mick.entity.User"
+		resultMap="UserResult">
+		SELECT
+		user_id,user_code,user_username,user_password,user_phone,user_email,create_date,autologinAuthKey
+		FROM sys_user WHERE user_username=#{username} and
+		user_password=#{password}
+	</select>
+	<select id="findMore" parameterType="com.mick.entity.User"
+		resultMap="UserResult">
+		SELECT
+		user_id,user_code,user_username,user_password,user_phone,user_email,create_date,autologinAuthKey,user_validateCode,user_status
+		FROM sys_user WHERE 1=1
+		<if test="username!=null and !&quot;&quot;.equals(username.trim())">
+			and user_username = #{username}
+		</if>
+		<if test="email!=null and !&quot;&quot;.equals(email.trim())">
+			and user_email = #{email}
+		</if>
+	</select>
+	<select id="query" resultMap="UserResult">
+		SELECT
+		user_id,user_code,user_username,user_password,user_phone,user_email,create_date,autologinAuthKey
+		FROM sys_user WHERE 1=1
+	</select>
+	<select id="getRoleID" resultType="String" parameterType="String">
+		SELECT
+		role_id
+		FROM m_user_role WHERE user_id=#{id}
+	</select>
+	<select id="pageQuery" parameterType="com.mick.entity.Page"
+		resultMap="UserResult">
+		<if test="&quot;0&quot;.equals(sort)">
+			SELECT
+			user_id,user_code,user_username,user_password,user_phone,user_email,create_date,autologinAuthKey
+			FROM sys_user LIMIT #{startPageIndex},#{pageSize}
+		</if>
+		<if test="&quot;1&quot;.equals(sort)">
+			SELECT
+			user_id,user_code,user_username,user_password,user_phone,user_email,create_date,autologinAuthKey
+			FROM (SELECT
+			user_id,user_code,user_username,user_password,user_phone,user_email,create_date,autologinAuthKey
+			FROM sys_user LIMIT #{startPageIndex},#{pageSize}) b order by
+			user_code DESC
+		</if>
+	</select>
+	<select id="queryReverse" resultMap="UserResult">
+		SELECT
+		user_id,user_code,user_username,user_password,user_phone,user_email,create_date,autologinAuthKey
+		FROM sys_user WHERE 1=1 order by user_code DESC
+	</select>
+	<select id="getRows" resultType="int">
+		SELECT count(*) FROM sys_user
+		WHERE 1=1
+	</select>
+	<update id="update" parameterType="com.mick.entity.User">
+		UPDATE sys_user SET
+		user_username=#{username},user_password=#{password},user_phone=#{phone},user_email=#{email},AUTOLOGINAUTHKEY=#{autologinAuthKey},
+		user_status=#{status},user_validateCode=#{validateCode}
+		WHERE
+		user_id=#{id}
+	</update>
+	<insert id="insert" parameterType="com.mick.entity.User">
+		insert into
+		sys_user(user_id,user_username,user_password,user_phone,user_email,create_date,autologinAuthKey,user_status,user_validateCode)
+		value(#{id},#{username},#{password},#{phone},#{email},#{createTime},null,#{status},#{validateCode})
+	</insert>
+	<delete id="delete" parameterType="int">
+		DELETE FROM sys_user WHERE
+		user_id = #{id}
+	</delete>
+	<delete id="deleteRole" parameterType="java.util.Map">
+		DELETE FROM m_user_role
+		WHERE
+		<foreach collection="roleids" item="item" separator="or">
+			(user_id =
+			#{userid} and role_id=#{item})
+		</foreach>
+	</delete>
+	<insert id="insertRole" parameterType="java.util.Map">
+		insert into
+		m_user_role(user_id,role_id)
+		values
+		<foreach collection="roleids" item="item" index="index"
+			separator=",">
+			(#{userid},#{item})
+		</foreach>
+	</insert>
+</mapper>

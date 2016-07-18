@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Customer">
+	<resultMap type="com.mick.entity.Customer" id="CustomerResult">
+		<id column="CUSTOMER_ID" jdbcType="VARCHAR" property="id" />
+		<result column="CUSTOMER_NAME" jdbcType="VARCHAR" property="name" />
+		<result column="CUSTOMER_CAPITAL" jdbcType="INTEGER" property="capital" />
+		<result column="CUSTOMER_SOURCE" jdbcType="VARCHAR" property="source" />
+		<result column="CUSTOMER_TYPE" jdbcType="VARCHAR" property="type" />
+		<result column="CUSTOMER_UNITNAME" jdbcType="VARCHAR" property="unitName" />
+		<result column="CUSTOMER_STATE" jdbcType="VARCHAR" property="state" />
+		<result column="CUSTOMER_NATURE" jdbcType="VARCHAR" property="nature" />
+		<result column="CUSTOMER_PHONE" jdbcType="VARCHAR" property="phone" />
+		<result column="CUSTOMER_ADDRESS" jdbcType="VARCHAR" property="address" />
+		<result column="EMPLOYEE_ID" jdbcType="VARCHAR" property="employee.id" />
+		<result column="CREATE_DATE" jdbcType="DATE" property="createDate" />
+	</resultMap>
+	<insert id="add" parameterType="com.mick.entity.Customer">
+		INSERT INTO
+		f_customer(CUSTOMER_ID,CUSTOMER_NAME,CUSTOMER_CAPITAL,CUSTOMER_SOURCE,CUSTOMER_TYPE,CUSTOMER_STATE,CUSTOMER_NATURE,CUSTOMER_PHONE,CUSTOMER_ADDRESS,CREATE_DATE,EMPLOYEE_ID)
+		VALUE(#{id},#{name},#{capital},#{source},#{type},#{state},#{nature},#{phone},#{address},#{createDate},#{employee.id})
+	</insert>
+	<select id="find" parameterType="String" resultMap="CustomerResult">
+		SELECT
+		CUSTOMER_ID,EMPLOYEE_ID,CUSTOMER_NAME,CUSTOMER_CAPITAL,CUSTOMER_NATURE,CUSTOMER_TYPE,CUSTOMER_SOURCE,CUSTOMER_STATE,CUSTOMER_PHONE,CUSTOMER_ADDRESS,CREATE_DATE,CUSTOMER_UNITNAME
+		FROM
+		f_customer
+		WHERE
+		CUSTOMER_ID=#{id}
+	</select>
+	<select id="pageQuery" parameterType="com.mick.entity.Page"
+		resultMap="CustomerResult">
+		SELECT
+		CUSTOMER_ID,EMPLOYEE_ID,CUSTOMER_NAME,CUSTOMER_CAPITAL,CUSTOMER_NATURE,CUSTOMER_TYPE,CUSTOMER_SOURCE,CUSTOMER_STATE,CUSTOMER_PHONE,CUSTOMER_ADDRESS,CREATE_DATE,CUSTOMER_UNITNAME
+		FROM
+		f_customer
+		LIMIT
+		#{startPageIndex},#{pageSize}
+	</select>
+	<select id="pageQuerySearch" parameterType="java.util.Map"
+		resultMap="CustomerResult">
+		SELECT
+		CUSTOMER_ID,EMPLOYEE_ID,CUSTOMER_NAME,EMPLOYEE_ID,CUSTOMER_CAPITAL,CUSTOMER_NATURE,CUSTOMER_TYPE,CUSTOMER_SOURCE,CUSTOMER_STATE,CUSTOMER_PHONE,CUSTOMER_ADDRESS,CREATE_DATE,CUSTOMER_UNITNAME
+		FROM
+		f_customer
+		WHERE 1=1
+		<if test="name!=null and !&quot;&quot;.equals(name.trim())">
+			and CUSTOMER_NAME like CONCAT('%','${name}','%' )
+		</if>
+		LIMIT #{page.startPageIndex},#{page.pageSize}
+	</select>
+	<select id="getRowSearch" parameterType="java.util.Map"
+		resultType="int">
+		SELECT count(*) FROM f_customer WHERE 1=1
+		<if test="name!=null and !&quot;&quot;.equals(name.trim())">
+			and CUSTOMER_NAME like CONCAT('%','${name}','%' )
+		</if>
+	</select>
+	<select id="getRows" resultType="int">
+		SELECT
+		count(*) FROM f_customer
+		WHERE 1=1
+	</select>
+	<update id="update" parameterType="com.mick.entity.Customer">
+		UPDATE f_customer SET
+		CUSTOMER_NAME=#{name},CUSTOMER_CAPITAL=#{capital},CUSTOMER_NATURE=#{nature},
+		CUSTOMER_TYPE=#{type},CUSTOMER_SOURCE=#{source},CUSTOMER_STATE=#{state},
+		CUSTOMER_PHONE=#{phone},CUSTOMER_ADDRESS=#{address},CUSTOMER_UNITNAME=#{unitName},EMPLOYEE_ID=#{employee.id}
+		WHERE CUSTOMER_ID=#{id}
+	</update>
+</mapper>

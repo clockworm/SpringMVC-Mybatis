@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Employee">
+	<resultMap type="com.mick.entity.Employee" id="EmployeeResult">
+		<id column="EMPLOYEE_ID" jdbcType="VARCHAR" property="id" />
+		<result column="EMPLOYEE_CODE" jdbcType="VARCHAR" property="employeeCode" />
+		<result column="EMPLOYEE_NAME" jdbcType="VARCHAR" property="employeeName" />
+		<result column="EMPLOYEE_SEX" jdbcType="VARCHAR" property="employeeSex" />
+		<result column="EMPLOYEE_AGE" jdbcType="INTEGER" property="employeeAge" />
+		<result column="EMPLOYEE_PHONE" jdbcType="VARCHAR" property="employeePhone" />
+		<result column="EMPLOYEE_ADDRESS" jdbcType="VARCHAR" property="employeeAddress" />
+		<result column="EMPLOYEE_EMAIL" jdbcType="VARCHAR" property="employeeEmail" />
+		<result column="EMPLOYEE_POSITION" jdbcType="VARCHAR" property="employeePosition" />
+		<result column="EMPLOYEE_SCHOOL" jdbcType="VARCHAR" property="employeeSchool" />
+		<result column="EMPLOYEE_EDUCATION" jdbcType="VARCHAR"
+			property="employeeEducatio" />
+		<result column="EMPLOYEE_CARD" jdbcType="VARCHAR" property="employeeCard" />
+		<result column="CREATE_DATE" jdbcType="DATE" property="createDate" />
+		<result column="USER_ID" jdbcType="VARCHAR" property="user.id" />
+	</resultMap>
+	<insert id="insert" parameterType="com.mick.entity.Employee">
+		INSERT INTO
+		f_employee(EMPLOYEE_ID,EMPLOYEE_CODE,EMPLOYEE_NAME,EMPLOYEE_SEX,EMPLOYEE_AGE,EMPLOYEE_PHONE,EMPLOYEE_ADDRESS,EMPLOYEE_EMAIL,EMPLOYEE_POSITION,EMPLOYEE_SCHOOL,EMPLOYEE_EDUCATION,EMPLOYEE_CARD,CREATE_DATE)
+		VALUE(#{id},#{employeeCode},#{employeeName},#{employeeSex},#{employeeAge},#{employeePhone},#{employeeAddress},#{employeeEmail},#{employeePosition},#{employeeSchool},#{employeeEducatio},#{employeeCard},#{createDate})
+	</insert>
+	<select id="find" parameterType="String" resultMap="EmployeeResult">
+		SELECT
+		EMPLOYEE_ID,EMPLOYEE_CODE,EMPLOYEE_NAME,EMPLOYEE_SEX,EMPLOYEE_AGE,EMPLOYEE_PHONE,EMPLOYEE_ADDRESS,EMPLOYEE_EMAIL,EMPLOYEE_POSITION,EMPLOYEE_SCHOOL,EMPLOYEE_EDUCATION,EMPLOYEE_CARD,CREATE_DATE,USER_ID
+		FROM
+		f_employee
+		WHERE
+		EMPLOYEE_ID=#{id}
+	</select>
+	<select id="findMore" parameterType="com.mick.entity.Employee"
+		resultMap="EmployeeResult">
+		SELECT
+		EMPLOYEE_ID,EMPLOYEE_CODE,EMPLOYEE_NAME,EMPLOYEE_SEX,EMPLOYEE_AGE,EMPLOYEE_PHONE,EMPLOYEE_ADDRESS,EMPLOYEE_EMAIL,EMPLOYEE_POSITION,EMPLOYEE_SCHOOL,EMPLOYEE_EDUCATION,EMPLOYEE_CARD,CREATE_DATE,USER_ID
+		FROM
+		f_employee
+		WHERE
+		EMPLOYEE_NAME=#{employeeName}
+	</select>
+	<select id="pageQuery" parameterType="com.mick.entity.Page"
+		resultMap="EmployeeResult">
+		SELECT
+		EMPLOYEE_ID,EMPLOYEE_CODE,EMPLOYEE_NAME,EMPLOYEE_SEX,EMPLOYEE_AGE,EMPLOYEE_PHONE,EMPLOYEE_ADDRESS,EMPLOYEE_EMAIL,EMPLOYEE_POSITION,EMPLOYEE_SCHOOL,EMPLOYEE_EDUCATION,EMPLOYEE_CARD,CREATE_DATE,USER_ID
+		FROM
+		f_employee
+		LIMIT #{startPageIndex},#{pageSize}
+	</select>
+	<select id="pageQuerySearch" parameterType="java.util.Map"
+		resultMap="EmployeeResult">
+		SELECT
+		EMPLOYEE_ID,EMPLOYEE_CODE,EMPLOYEE_NAME,EMPLOYEE_SEX,EMPLOYEE_AGE,EMPLOYEE_PHONE,EMPLOYEE_ADDRESS,EMPLOYEE_EMAIL,EMPLOYEE_POSITION,EMPLOYEE_SCHOOL,EMPLOYEE_EDUCATION,EMPLOYEE_CARD,CREATE_DATE
+		FROM
+		f_employee
+		WHERE 1=1
+		<if test="employeeName!=null and !&quot;&quot;.equals(employeeName.trim())">
+			and EMPLOYEE_NAME like CONCAT('%','${employeeName}','%' )
+		</if>
+		<if
+			test="employeePosition!=null and !&quot;&quot;.equals(employeePosition.trim())">
+			and EMPLOYEE_POSITION = #{employeePosition}
+		</if>
+		LIMIT #{page.startPageIndex},#{page.pageSize}
+	</select>
+	<select id="getRows" resultType="int">
+		SELECT
+		count(*) FROM f_employee
+		WHERE 1=1
+	</select>
+	<select id="isbing" parameterType="String" resultType="int">
+		SELECT
+		count(*) FROM f_employee
+		WHERE 1=1 and USER_ID=#{id}
+	</select>
+	<select id="getEmployee_userid" parameterType="String"
+		resultMap="EmployeeResult">
+		SELECT
+		EMPLOYEE_ID,EMPLOYEE_CODE,EMPLOYEE_NAME,EMPLOYEE_SEX,EMPLOYEE_AGE,EMPLOYEE_PHONE,EMPLOYEE_ADDRESS,EMPLOYEE_EMAIL,EMPLOYEE_POSITION,EMPLOYEE_SCHOOL,EMPLOYEE_EDUCATION,EMPLOYEE_CARD,CREATE_DATE,USER_ID
+		FROM
+		f_employee
+		WHERE 1=1 and USER_ID=#{id}
+	</select>
+	<select id="getRowSearch" parameterType="java.util.Map"
+		resultType="int">
+		SELECT
+		count(*) FROM f_employee
+		WHERE 1=1
+		<if test="employeeName!=null and !&quot;&quot;.equals(employeeName.trim())">
+			and EMPLOYEE_NAME like CONCAT('%','${employeeName}','%' )
+		</if>
+		<if
+			test="employeePosition!=null and !&quot;&quot;.equals(employeePosition.trim())">
+			and EMPLOYEE_POSITION = #{employeePosition}
+		</if>
+	</select>
+	<!-- 修改 -->
+	<update id="update" parameterType="com.mick.entity.Employee">
+		UPDATE f_employee SET
+		EMPLOYEE_CODE=#{employeeCode},EMPLOYEE_NAME=#{employeeName},
+		EMPLOYEE_SEX=#{employeeSex},EMPLOYEE_AGE=#{employeeAge},
+		EMPLOYEE_PHONE=#{employeePhone},EMPLOYEE_ADDRESS=#{employeeAddress},EMPLOYEE_EMAIL=#{employeeEmail},
+		EMPLOYEE_POSITION=#{employeePosition},EMPLOYEE_SCHOOL=#{employeeSchool},EMPLOYEE_EDUCATION=#{employeeEducatio},
+		EMPLOYEE_CARD=#{employeeCard},USER_ID=#{user.id}
+		WHERE
+		EMPLOYEE_ID=#{id}
+	</update>
+</mapper>

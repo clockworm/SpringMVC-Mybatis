@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Follow">
+	<resultMap type="com.mick.entity.Follow" id="FollowResult">
+		<id column="FOLLOW_ID" jdbcType="VARCHAR" property="id" />
+		<result column="CUSTOMER_ID" jdbcType="VARCHAR" property="customer.id" />
+		<result column="FOLLOW_STATE" jdbcType="VARCHAR" property="state" />
+		<result column="FOLLOW_MESSAGE" jdbcType="VARCHAR" property="message" />
+		<result column="FOLLOW_NOTE" jdbcType="VARCHAR" property="note" />
+		<result column="FOLLOW_DATE" jdbcType="TIMESTAMP" property="createDate" />
+	</resultMap>
+	<insert id="insert" parameterType="com.mick.entity.Follow">
+		INSERT INTO
+		f_follow(FOLLOW_ID,CUSTOMER_ID,FOLLOW_STATE,FOLLOW_MESSAGE,FOLLOW_NOTE,FOLLOW_DATE)
+		VALUE(#{id},#{customer.id},#{state},#{message},#{note},#{createDate})
+	</insert>
+	<select id="getFollows" parameterType="String" resultMap="FollowResult">
+		SELECT
+		FOLLOW_ID,CUSTOMER_ID,FOLLOW_STATE,FOLLOW_MESSAGE,FOLLOW_NOTE,FOLLOW_DATE
+		FROM f_follow
+		WHERE 1=1 AND CUSTOMER_ID=#{customerid} ORDER BY
+		FOLLOW_DATE DESC;
+	</select>
+	<delete id="delete" parameterType="String">
+		DELETE FROM f_follow WHERE
+		FOLLOW_ID=#{id}
+	</delete>
+</mapper>
